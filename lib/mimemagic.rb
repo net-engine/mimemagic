@@ -122,11 +122,16 @@ class MimeMagic
     matches.any? do |offset, value, children|
       match =
         if Range === offset
-          io.read(offset.begin, buffer)
+          io.seek(offset.begin)
           x = io.read(offset.end - offset.begin + value.bytesize, buffer)
           x && x.include?(value)
+        elsif offset.negative?
+          max_offset = [0 - io.size, offset].max
+          io.seek(max_offset, IO::SEEK_END)
+          x = io.read(nil, buffer)
+          x && x.include?(value)
         else
-          io.read(offset, buffer)
+          io.seek(offset)
           io.read(value.bytesize, buffer) == value
         end
       io.rewind
