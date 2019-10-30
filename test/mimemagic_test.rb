@@ -143,7 +143,7 @@ class TestMimeMagic < Minitest::Test
     end
 
     extend Forwardable
-    delegate [:read, :size, :rewind, :eof?, :close] => :@io
+    delegate [:read, :size, :rewind, :eof?, :close, :seek] => :@io
   end
 
   class StringableObject
